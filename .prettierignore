@@ -1,0 +1,8 @@
+node_modules
+dist
+coverage
+playwright-report
+storybook-static
+.vite
+pnpm-lock.yaml
+package-lock.json

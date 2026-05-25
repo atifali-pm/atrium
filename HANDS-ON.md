@@ -52,18 +52,9 @@ Rules (non-negotiable, from /home/atif/.claude/CLAUDE.md and per-project memory)
 When Phase 3 is done: commit, push, confirm CI is green, capture screenshots, update README, then stop and report.
 ```
 
-## Outstanding from Phase 1
+## Deploys
 
-Cloudflare Pages deploy is still wired to `workflow_dispatch` only:
-
-1. Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` to the repo secrets at https://github.com/atifali-pm/atrium/settings/secrets/actions
-2. Manually trigger the `Deploy to Cloudflare Pages` workflow from the Actions tab and confirm it publishes
-3. Flip the trigger in `.github/workflows/deploy.yml` from `workflow_dispatch` to `push: branches: [main]` so future commits auto-deploy
-4. Wire `atrium.atifali.pages.dev` as a custom domain alias in the Cloudflare Pages dashboard (target is the `atrium` project)
-
-## Outstanding from Phase 2
-
-Portfolio site case-study entry for Atrium has not been opened yet. Talk to Atif before touching the portfolio repo; the agreement is no portfolio entry until at least Phase 2 ships (which it now has).
+Cloudflare Pages auto-deploys on every push to `main` via the dashboard Git integration; no GitHub Actions workflow is required. Confirm the project exists in the Cloudflare Pages dashboard, point it at `github.com/atifali-pm/atrium`, build command `npm run build`, output directory `dist`. After the first deploy lands, the demo URL goes live at the CF Pages alias.
 
 ## Phase plan with checkboxes
 

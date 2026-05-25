@@ -21,12 +21,12 @@ Before running `npm run dev` or `npm test`:
 3. **Clean install.** `rm -rf node_modules package-lock.json && npm install` if the lockfile looks stale.
 4. **First-time only.** `npx playwright install chromium` before running e2e.
 
-## Paste-ready kickoff prompt for the next Claude Code session
+## Paste-ready kickoff prompt for the next Claude Code session (Phase 2)
 
 Open a new Claude Code session in `/home/atif/projects/atrium/` and paste this:
 
 ```
-Resume Atrium at Phase 1.
+Resume Atrium at Phase 2.
 
 Read in this order:
 1. /home/atif/.claude/projects/-home-atif-projects-atrium/memory/MEMORY.md
@@ -34,26 +34,33 @@ Read in this order:
 3. /home/atif/.claude/projects/-home-atif-projects-portfolio/memory/project_atrium_idea.md (full spec, source of truth)
 4. /home/atif/projects/atrium/HANDS-ON.md
 
-Then build Phase 1 to completion. Phase 1 scope:
-- App shell: top bar, left rail (persona placeholder), main chat column, right panel hidden by default.
-- Design tokens defined in src/lib/tokens (TS source of truth) and exported to CSS vars + Tailwind theme.
-- Light/dark/system theme with a working toggle.
-- SSE simulator in src/lib/sse-simulator that emits deterministic token streams from fixture responses.
-- Streaming chat happy path: composer at the bottom, message list above, send a prompt, watch tokens stream in, cancel button works, retry button works.
-- Vitest coverage for the SSE simulator and the chat store.
-- One Playwright e2e: open the app, send a prompt, assert tokens appear, assert final message renders.
-- Deploy preview to Cloudflare Pages via a new workflow file. Add the Cloudflare API token to repo secrets first.
+Then build Phase 2 to completion. Phase 2 scope:
+- Memory inspector panel that wires into the existing RightPanel slot. Shows per-fact provenance (which message taught it, when, confidence) and a per-fact forget control. State backed by Zustand, deterministically populated by tool/fixture interactions.
+- Tool trace timeline drawer at the bottom of the chat. Per-call name, input, output, latency, status, expandable payload. Filter by tool / by error / by latency outlier.
+- Persona registry under src/features/personas with one persona (Research Analyst) wired end to end: avatar, system prompt summary, default tools, distinct fixture set. Persona selection updates the left rail's persona card.
+- New fixtures so tool calls and memory mutations happen alongside streaming text. Mock layer still the contract.
+- Vitest coverage for memory and trace stores. Playwright e2e covering: send a prompt, watch a tool call land in the trace timeline, see a new memory fact appear, click forget, see it disappear.
+- After landing locally and on CI: open the portfolio site case-study entry for Atrium (talk to me before touching the portfolio repo).
 
 Rules (non-negotiable, from /home/atif/.claude/CLAUDE.md and per-project memory):
 - No em dashes anywhere (READMEs, code comments, commit messages, chat).
 - No space-hyphen-space pause separators in prose.
 - No Co-Authored-By or AI attribution in git commits ever.
-- Do not frame Atrium as a Swisper or Le Chat clone; it is its own product in the privacy-first assistant category.
-- Take screenshots when each milestone lands and embed them in README.md from /screenshots/.
+- Atrium is its own product in the privacy-first assistant category; do not frame as a Swisper or Le Chat clone.
+- Screenshots when each milestone lands, embed in README from /screenshots/.
 - No real backend, no real LLM. Mock layer only.
 
-When Phase 1 is done: commit, push, confirm CI is green, capture screenshots, update README, then stop and report.
+When Phase 2 is done: commit, push, confirm CI is green, capture screenshots, update README, then stop and report.
 ```
+
+## Outstanding from Phase 1
+
+Before kicking off Phase 2, finish the Cloudflare Pages deploy:
+
+1. Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` to the repo secrets at https://github.com/atifali-pm/atrium/settings/secrets/actions
+2. Manually trigger the `Deploy to Cloudflare Pages` workflow from the Actions tab and confirm it publishes
+3. Flip the trigger in `.github/workflows/deploy.yml` from `workflow_dispatch` to `push: branches: [main]` so future commits auto-deploy
+4. Wire `atrium.atifali.pages.dev` as a custom domain alias in the Cloudflare Pages dashboard (target is the `atrium` project)
 
 ## Phase plan with checkboxes
 
@@ -68,18 +75,18 @@ When Phase 1 is done: commit, push, confirm CI is green, capture screenshots, up
 - [x] Public repo at github.com/atifali-pm/atrium
 - [x] First push, CI green
 
-### Phase 1: shell + streaming chat
-- [ ] App shell layout (top bar, left rail, main column, right panel)
-- [ ] Design tokens in `src/lib/tokens` exported to CSS vars + Tailwind
-- [ ] Light/dark/system theme toggle
-- [ ] SSE simulator in `src/lib/sse-simulator`
-- [ ] Chat store (Zustand): messages, send, cancel, retry, edit
-- [ ] Composer + message list + token-by-token reveal
-- [ ] Markdown rendering, code blocks with copy button
-- [ ] Vitest coverage for simulator and chat store
-- [ ] Playwright e2e for the happy path
-- [ ] Cloudflare Pages deploy workflow
-- [ ] Screenshots captured, embedded in README
+### Phase 1: shell + streaming chat (DONE 2026-05-25, commit 8bf5c27)
+- [x] App shell layout (top bar, left rail, main column, right panel)
+- [x] Design tokens in `src/lib/tokens` exported to CSS vars + Tailwind
+- [x] Light/dark/system theme toggle
+- [x] SSE simulator in `src/lib/sse-simulator`
+- [x] Chat store (Zustand): messages, send, cancel, retry, edit
+- [x] Composer + message list + token-by-token reveal
+- [x] Markdown rendering, code blocks with copy button
+- [x] Vitest coverage for simulator and chat store (14 tests)
+- [x] Playwright e2e for the happy path (runs in CI)
+- [x] Cloudflare Pages deploy workflow (workflow_dispatch only until secrets land, commit a2acfef)
+- [x] Screenshots captured, embedded in README
 
 ### Phase 2: memory + traces + first persona
 - [ ] Memory inspector side panel (collapsible)

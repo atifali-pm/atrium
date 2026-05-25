@@ -27,26 +27,34 @@ Atrium is a general-purpose reference UI for that category. It is not a clone of
 
 - **Phase 0 (done):** scaffold. Repo, CI green, hello-world page rendering, full toolchain installed.
 - **Phase 1 (done):** app shell, design tokens, light/dark/system themes, deterministic SSE simulator, streaming chat with send/cancel/retry/edit, markdown and code blocks with copy.
-- **Phase 2:** memory inspector, tool trace timeline, one persona wired. Case-study entry goes live on the portfolio site.
+- **Phase 2 (done):** Research Analyst persona wired end to end, tool trace timeline (filters by status and latency, per-call input/output drill-down), memory inspector with per-fact provenance and a forget control, persona switcher with Phase 3 stubs reserved.
 - **Phase 3:** all three personas, persona switcher transitions, command palette, theming polish.
 - **Phase 4:** voice input, multimodal attachments, workspace canvas split view.
 - **Phase 5:** privacy UX, Storybook coverage for every primitive, Playwright e2e for all 10 features, Lighthouse and axe-core gates in CI.
 - **Phase 6 (optional):** swap the mock layer for a real backend (FastAPI + LangGraph + Ollama + pgvector) without touching feature code.
 
-Current status: Phase 1 complete.
+Current status: Phase 2 complete.
 
 ## Screenshots
 
 Files live in [`/screenshots/`](./screenshots/) and are embedded below. Each phase adds new captures.
 
-**Empty state (light theme):** the welcome panel, persona placeholder, and suggested prompts.
+**Empty state (light theme):** persona switcher, suggested prompts tuned for the Research Analyst, memory inspector waiting on the right, trace timeline peek bar at the bottom.
 
-![Atrium empty state in light theme](screenshots/01-hero-light.png)
+![Atrium empty state in light theme](screenshots/01-empty-state-light.png)
 
-**Streaming mid-response (dark theme):** token-by-token reveal with a stop control and a streaming pill.
+**Mid-stream research with a running tool call (dark theme):** assistant streams while the trace timeline shows a `running` tool call in the bottom drawer.
 
-![Streaming chat in dark theme](screenshots/02-streaming-dark.png)
+![Streaming research with a running tool call](screenshots/02-research-streaming-dark.png)
 
-**Code answer with copy button (dark theme):** markdown and code blocks rendered from the fixture stream.
+**Research complete with a memory fact landed (dark theme):** the assistant's brief, the tool trace peek, and a new fact in the memory inspector with its provenance line.
 
-![Code block response in dark theme](screenshots/03-code-block-dark.png)
+![Research complete with memory fact](screenshots/03-research-complete-dark.png)
+
+**Trace drawer expanded with tool input and output (dark theme):** the trace timeline drawer expanded with the `fetch_url` call open, showing input + output JSON. Filter pills toggle between all, running, ok, error, and slow-only.
+
+![Trace drawer expanded showing tool input and output](screenshots/04-trace-expanded-dark.png)
+
+**Persona switcher menu (light theme):** the persona menu open in the left rail, with the Research Analyst active and the Code Assistant and Travel Planner stubs marked as Phase 3.
+
+![Persona switcher menu with Phase 3 stubs](screenshots/05-persona-menu-light.png)

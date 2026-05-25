@@ -15,7 +15,7 @@ export function TopBar({ rightPanelOpen, onToggleRightPanel }: TopBarProps) {
         </div>
         <span className="text-sm font-semibold tracking-tight text-ink-strong">Atrium</span>
         <span className="ml-1 rounded-full bg-surface-2 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-ink-muted">
-          Phase 1
+          Phase 2
         </span>
       </div>
 

@@ -71,7 +71,7 @@ export function Composer() {
         )}
       </div>
       <p className="mt-2 text-center text-[11px] text-ink-subtle">
-        Atrium is a Phase 1 mock. Responses come from a deterministic local fixture set.
+        Atrium is a Phase 2 mock. Tool calls and memory writes come from a deterministic local fixture set.
       </p>
     </form>
   )

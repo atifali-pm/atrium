@@ -2,10 +2,10 @@ import { SparkleIcon } from '@/components/icons'
 import { useChatStore } from '@/stores/chat'
 
 const SUGGESTIONS = [
-  'Say hello',
+  'Research the Vite ecosystem',
+  'Search the web for React 19',
+  'Summarize https://example.com/post',
   'What can you do?',
-  'Write a debounce function in TypeScript',
-  'Show me a markdown tour',
 ]
 
 export function EmptyState() {
@@ -20,7 +20,8 @@ export function EmptyState() {
         <h2 className="text-2xl font-semibold text-ink-strong">Welcome to Atrium</h2>
         <p className="mt-2 text-sm text-ink-muted">
           A privacy-first AI assistant workspace. Streaming chat, memory inspection, tool traces,
-          personas, voice. Phase 1 ships the streaming chat against a deterministic mock layer.
+          personas, voice. Phase 2 wires the Research Analyst persona end to end against the mock
+          layer, with the tool trace timeline at the bottom and the memory inspector on the right.
         </p>
         <div className="mx-auto mt-6 grid max-w-xl gap-2 sm:grid-cols-2">
           {SUGGESTIONS.map((prompt) => (

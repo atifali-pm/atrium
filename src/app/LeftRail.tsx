@@ -1,4 +1,4 @@
-import { SparkleIcon } from '@/components/icons'
+import { PersonaSwitcher } from '@/features/personas/PersonaSwitcher'
 import { useChatStore } from '@/stores/chat'
 
 export function LeftRail() {
@@ -6,17 +6,11 @@ export function LeftRail() {
   const messageCount = useChatStore((s) => s.messages.length)
 
   return (
-    <aside className="hidden w-60 shrink-0 flex-col border-r border-line bg-surface-1 md:flex">
+    <aside className="hidden w-64 shrink-0 flex-col border-r border-line bg-surface-1 md:flex">
       <div className="border-b border-line px-4 py-3">
         <p className="text-[10px] font-medium uppercase tracking-wider text-ink-subtle">Persona</p>
-        <div className="mt-2 flex items-center gap-2 rounded-md border border-line bg-surface-0 px-2 py-1.5">
-          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-accent-soft text-accent">
-            <SparkleIcon size={12} />
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-xs font-medium text-ink-strong">Generalist</p>
-            <p className="truncate text-[10px] text-ink-subtle">Phase 1 default</p>
-          </div>
+        <div className="mt-2">
+          <PersonaSwitcher />
         </div>
       </div>
 
@@ -48,7 +42,7 @@ export function LeftRail() {
       </div>
 
       <div className="mt-auto border-t border-line px-4 py-3 text-[11px] text-ink-subtle">
-        Multi-session memory arrives in Phase 2.
+        Multi-session memory arrives in Phase 3.
       </div>
     </aside>
   )

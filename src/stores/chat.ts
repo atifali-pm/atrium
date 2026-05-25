@@ -1,5 +1,9 @@
 import { create } from 'zustand'
+import { getPersona, type Persona } from '@/features/personas/registry'
 import { streamResponse, type StreamOptions } from '@/lib/sse-simulator'
+import { useMemoryStore } from './memory'
+import { usePersonaStore } from './persona'
+import { useTracesStore } from './traces'
 
 export type MessageRole = 'user' | 'assistant'
 export type MessageStatus = 'idle' | 'streaming' | 'done' | 'cancelled' | 'error'
@@ -12,6 +16,7 @@ export interface Message {
   createdAt: number
   errorMessage?: string
   fixtureId?: string
+  personaId?: string
 }
 
 interface ChatState {
@@ -35,29 +40,71 @@ function nextId(prefix: string): string {
 interface StreamRunOptions {
   prompt: string
   assistantId: string
+  persona: Persona
   stream?: StreamOptions
 }
 
 async function runStream(
   set: (updater: (state: ChatState) => Partial<ChatState>) => void,
   get: () => ChatState,
-  { prompt, assistantId, stream }: StreamRunOptions,
+  { prompt, assistantId, persona, stream }: StreamRunOptions,
 ): Promise<void> {
   const controller = new AbortController()
   activeController = controller
   set(() => ({ isStreaming: true }))
 
   const streamOptions: StreamOptions = { ...(stream ?? {}), signal: controller.signal }
-  const events = streamResponse(prompt, streamOptions)
+  const events = streamResponse(prompt, persona, streamOptions)
+
+  let currentFixtureId = ''
+  const memory = useMemoryStore.getState()
+  const traces = useTracesStore.getState()
 
   try {
     for await (const event of events) {
-      if (event.type === 'token') {
+      if (event.type === 'start') {
+        currentFixtureId = event.fixtureId
+        set((state) => ({
+          messages: state.messages.map((m) =>
+            m.id === assistantId ? { ...m, fixtureId: event.fixtureId, personaId: event.personaId } : m,
+          ),
+        }))
+      } else if (event.type === 'token') {
         set((state) => ({
           messages: state.messages.map((m) =>
             m.id === assistantId ? { ...m, content: m.content + event.token } : m,
           ),
         }))
+      } else if (event.type === 'tool-start') {
+        traces.start({
+          id: event.toolId,
+          name: event.name,
+          input: event.input,
+          messageId: assistantId,
+          fixtureId: currentFixtureId,
+          personaId: persona.id,
+        })
+      } else if (event.type === 'tool-end') {
+        traces.complete({
+          id: event.toolId,
+          output: event.output,
+          latencyMs: event.latencyMs,
+          status: event.status,
+          ...(event.errorMessage ? { errorMessage: event.errorMessage } : {}),
+        })
+      } else if (event.type === 'memory-set') {
+        memory.set({
+          id: event.factId,
+          key: event.key,
+          value: event.value,
+          confidence: event.confidence,
+          provenance: {
+            messageId: assistantId,
+            fixtureId: currentFixtureId,
+            personaId: persona.id,
+            capturedAt: Date.now(),
+          },
+        })
       } else if (event.type === 'done') {
         set((state) => ({
           messages: state.messages.map((m) =>
@@ -92,6 +139,10 @@ async function runStream(
   }
 }
 
+function activePersona(): Persona {
+  return getPersona(usePersonaStore.getState().activeId)
+}
+
 export const useChatStore = create<ChatState>((set, get) => ({
   messages: [],
   isStreaming: false,
@@ -99,6 +150,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   send: async (prompt, opts) => {
     const trimmed = prompt.trim()
     if (trimmed.length === 0 || get().isStreaming) return
+    const persona = activePersona()
 
     const userMessage: Message = {
       id: nextId('user'),
@@ -115,7 +167,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       createdAt: Date.now() + 1,
     }
     set((state) => ({ messages: [...state.messages, userMessage, assistantMessage] }))
-    await runStream(set, get, { prompt: trimmed, assistantId: assistantMessage.id, stream: opts })
+    await runStream(set, get, { prompt: trimmed, assistantId: assistantMessage.id, persona, stream: opts })
   },
 
   cancel: () => {
@@ -145,7 +197,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
       createdAt: Date.now(),
     }
     set(() => ({ messages: [...trimmedMsgs, assistantMessage] }))
-    await runStream(set, get, { prompt: lastUser.content, assistantId: assistantMessage.id, stream: opts })
+    await runStream(set, get, {
+      prompt: lastUser.content,
+      assistantId: assistantMessage.id,
+      persona: activePersona(),
+      stream: opts,
+    })
   },
 
   editAndResend: async (userMessageId, nextContent, opts) => {
@@ -170,12 +227,19 @@ export const useChatStore = create<ChatState>((set, get) => ({
       createdAt: Date.now() + 1,
     }
     set(() => ({ messages: [...truncated, editedUser, assistantMessage] }))
-    await runStream(set, get, { prompt: trimmed, assistantId: assistantMessage.id, stream: opts })
+    await runStream(set, get, {
+      prompt: trimmed,
+      assistantId: assistantMessage.id,
+      persona: activePersona(),
+      stream: opts,
+    })
   },
 
   reset: () => {
     activeController?.abort()
     activeController = null
+    useMemoryStore.getState().reset()
+    useTracesStore.getState().reset()
     set(() => ({ messages: [], isStreaming: false }))
   },
 }))

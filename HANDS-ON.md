@@ -21,12 +21,12 @@ Before running `npm run dev` or `npm test`:
 3. **Clean install.** `rm -rf node_modules package-lock.json && npm install` if the lockfile looks stale.
 4. **First-time only.** `npx playwright install chromium` before running e2e.
 
-## Paste-ready kickoff prompt for the next Claude Code session (Phase 2)
+## Paste-ready kickoff prompt for the next Claude Code session (Phase 3)
 
 Open a new Claude Code session in `/home/atif/projects/atrium/` and paste this:
 
 ```
-Resume Atrium at Phase 2.
+Resume Atrium at Phase 3.
 
 Read in this order:
 1. /home/atif/.claude/projects/-home-atif-projects-atrium/memory/MEMORY.md
@@ -34,13 +34,12 @@ Read in this order:
 3. /home/atif/.claude/projects/-home-atif-projects-portfolio/memory/project_atrium_idea.md (full spec, source of truth)
 4. /home/atif/projects/atrium/HANDS-ON.md
 
-Then build Phase 2 to completion. Phase 2 scope:
-- Memory inspector panel that wires into the existing RightPanel slot. Shows per-fact provenance (which message taught it, when, confidence) and a per-fact forget control. State backed by Zustand, deterministically populated by tool/fixture interactions.
-- Tool trace timeline drawer at the bottom of the chat. Per-call name, input, output, latency, status, expandable payload. Filter by tool / by error / by latency outlier.
-- Persona registry under src/features/personas with one persona (Research Analyst) wired end to end: avatar, system prompt summary, default tools, distinct fixture set. Persona selection updates the left rail's persona card.
-- New fixtures so tool calls and memory mutations happen alongside streaming text. Mock layer still the contract.
-- Vitest coverage for memory and trace stores. Playwright e2e covering: send a prompt, watch a tool call land in the trace timeline, see a new memory fact appear, click forget, see it disappear.
-- After landing locally and on CI: open the portfolio site case-study entry for Atrium (talk to me before touching the portfolio repo).
+Then build Phase 3 to completion. Phase 3 scope:
+- Promote the Code Assistant and Travel Planner persona stubs into real personas. Each gets its own fixture pool with persona-appropriate tools: Code Assistant (read_file, run_tests, apply_patch) and Travel Planner (search_flights, search_hotels, build_itinerary). Each fixture set includes one greeting, one about, two tool-driven response paths, and one fallback. Memory writes reflect the persona's domain.
+- Persona switcher transitions via Framer Motion. Switching personas mid-conversation triggers a soft swap animation in the chat column and the trace drawer, with a visible "switched to persona X" system line in the chat.
+- Cmd+K command palette overlay. At minimum: switch persona, switch theme, jump to setting (settings panel can be a small popover), run saved prompt (a fixture-suggested prompt per active persona), and fuzzy-search the current conversation messages.
+- Theming polish pass: motion tokens applied to common transitions, focus rings consistent, hover/active states audited across components. Document the design tokens in a small Storybook story bundle (this is the moment Storybook gets wired in for the first time).
+- Vitest coverage for the palette and any new stores. One Playwright e2e covering Cmd+K: open palette, switch persona, palette closes, persona is active, a new prompt routes through the new persona's fixtures.
 
 Rules (non-negotiable, from /home/atif/.claude/CLAUDE.md and per-project memory):
 - No em dashes anywhere (READMEs, code comments, commit messages, chat).
@@ -50,17 +49,21 @@ Rules (non-negotiable, from /home/atif/.claude/CLAUDE.md and per-project memory)
 - Screenshots when each milestone lands, embed in README from /screenshots/.
 - No real backend, no real LLM. Mock layer only.
 
-When Phase 2 is done: commit, push, confirm CI is green, capture screenshots, update README, then stop and report.
+When Phase 3 is done: commit, push, confirm CI is green, capture screenshots, update README, then stop and report.
 ```
 
 ## Outstanding from Phase 1
 
-Before kicking off Phase 2, finish the Cloudflare Pages deploy:
+Cloudflare Pages deploy is still wired to `workflow_dispatch` only:
 
 1. Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` to the repo secrets at https://github.com/atifali-pm/atrium/settings/secrets/actions
 2. Manually trigger the `Deploy to Cloudflare Pages` workflow from the Actions tab and confirm it publishes
 3. Flip the trigger in `.github/workflows/deploy.yml` from `workflow_dispatch` to `push: branches: [main]` so future commits auto-deploy
 4. Wire `atrium.atifali.pages.dev` as a custom domain alias in the Cloudflare Pages dashboard (target is the `atrium` project)
+
+## Outstanding from Phase 2
+
+Portfolio site case-study entry for Atrium has not been opened yet. Talk to Atif before touching the portfolio repo; the agreement is no portfolio entry until at least Phase 2 ships (which it now has).
 
 ## Phase plan with checkboxes
 
@@ -88,13 +91,13 @@ Before kicking off Phase 2, finish the Cloudflare Pages deploy:
 - [x] Cloudflare Pages deploy workflow (workflow_dispatch only until secrets land, commit a2acfef)
 - [x] Screenshots captured, embedded in README
 
-### Phase 2: memory + traces + first persona
-- [ ] Memory inspector side panel (collapsible)
-- [ ] Per-fact provenance, forget control
-- [ ] Tool trace timeline drawer
-- [ ] Per-call name, input, output, latency, filters
-- [ ] Persona registry with one persona wired end to end
-- [ ] Portfolio site case-study entry goes live
+### Phase 2: memory + traces + first persona (DONE 2026-05-25, commit 94c67df)
+- [x] Memory inspector side panel (lg+ default open, toggle in top bar)
+- [x] Per-fact provenance, forget control, purge-all
+- [x] Tool trace timeline drawer (collapsible peek + filters + expandable rows)
+- [x] Per-call name, input, output, latency, status, slow-only filter
+- [x] Persona registry with Research Analyst wired end to end; Phase 3 stubs reserved
+- [ ] Portfolio site case-study entry goes live (pending Atif's go-ahead)
 
 ### Phase 3: personas + palette + theming polish
 - [ ] All three personas with distinct fixtures and tools

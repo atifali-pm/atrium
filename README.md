@@ -26,17 +26,27 @@ Atrium is a general-purpose reference UI for that category. It is not a clone of
 ## Phases
 
 - **Phase 0 (done):** scaffold. Repo, CI green, hello-world page rendering, full toolchain installed.
-- **Phase 1:** layout shell, design tokens, light/dark themes, streaming chat against an SSE simulator. Deploy to Cloudflare Pages.
+- **Phase 1 (done):** app shell, design tokens, light/dark/system themes, deterministic SSE simulator, streaming chat with send/cancel/retry/edit, markdown and code blocks with copy.
 - **Phase 2:** memory inspector, tool trace timeline, one persona wired. Case-study entry goes live on the portfolio site.
 - **Phase 3:** all three personas, persona switcher transitions, command palette, theming polish.
 - **Phase 4:** voice input, multimodal attachments, workspace canvas split view.
 - **Phase 5:** privacy UX, Storybook coverage for every primitive, Playwright e2e for all 10 features, Lighthouse and axe-core gates in CI.
 - **Phase 6 (optional):** swap the mock layer for a real backend (FastAPI + LangGraph + Ollama + pgvector) without touching feature code.
 
-Current status: Phase 0 complete.
+Current status: Phase 1 complete.
 
 ## Screenshots
 
-Screenshots land here as each phase ships. Files live in [`/screenshots/`](./screenshots/) and are embedded below.
+Files live in [`/screenshots/`](./screenshots/) and are embedded below. Each phase adds new captures.
 
-![Atrium hero (placeholder)](screenshots/01-hero.png)
+**Empty state (light theme):** the welcome panel, persona placeholder, and suggested prompts.
+
+![Atrium empty state in light theme](screenshots/01-hero-light.png)
+
+**Streaming mid-response (dark theme):** token-by-token reveal with a stop control and a streaming pill.
+
+![Streaming chat in dark theme](screenshots/02-streaming-dark.png)
+
+**Code answer with copy button (dark theme):** markdown and code blocks rendered from the fixture stream.
+
+![Code block response in dark theme](screenshots/03-code-block-dark.png)

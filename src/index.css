@@ -6,12 +6,40 @@
   html {
     color-scheme: light dark;
   }
+  html.dark {
+    color-scheme: dark;
+  }
   body {
-    @apply bg-white text-ink-700 antialiased dark:bg-ink-900 dark:text-ink-100;
+    @apply bg-surface-0 text-ink antialiased;
     font-family: theme('fontFamily.sans');
   }
   code,
-  pre {
+  pre,
+  kbd,
+  samp {
     font-family: theme('fontFamily.mono');
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-strong) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: var(--color-line-strong);
+    border-radius: 9999px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
   }
 }

@@ -35,3 +35,7 @@ pnpm-debug.log*
 *.ntvs*
 *.njsproj
 *.sln
+
+# Local Claude Code settings
+.claude/
+

@@ -1,10 +1,17 @@
 import { render, screen } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import App from './App'
+import { useChatStore } from './stores/chat'
 
 describe('App', () => {
-  it('renders the Atrium hero', () => {
+  beforeEach(() => {
+    useChatStore.getState().reset()
+  })
+
+  it('renders the brand and welcome state', () => {
     render(<App />)
-    expect(screen.getByRole('heading', { level: 1, name: /atrium/i })).toBeInTheDocument()
+    expect(screen.getByText(/^Atrium$/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: /welcome to atrium/i })).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: /message/i })).toBeInTheDocument()
   })
 })
